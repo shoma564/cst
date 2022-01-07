@@ -1,0 +1,109 @@
+ version: '2.1'
+
+ services:
+   team1:
+     container_name: os1-vlan50
+     build:
+       context: .
+       dockerfile: Dockerfile
+     command: bash -c "/usr/sbin/sshd -D"
+     networks:
+       vlan50:
+         ipv4_address: 192.168.50.31
+     restart: always
+     environment:
+       - TZ=Asia/Tokyo
+     volumes:
+       - ./bus_restart/1/A_BUS_restart.cpython-36.pyc:/home/BUS_A/BUS_restart.py
+       - ./bus_restart/1/B_BUS_restart.cpython-36.pyc:/home/BUS_B/BUS_restart.py
+
+   team2:
+     container_name: os2-vlan50
+     build:
+       context: .
+       dockerfile: Dockerfile
+     command: bash -c "/usr/sbin/sshd -D"
+     networks:
+       vlan50:
+         ipv4_address: 192.168.50.32
+     restart: always
+     environment:
+       - TZ=Asia/Tokyo
+     volumes:
+       - ./bus_restart/2/A_BUS_restart.cpython-36.pyc:/home/BUS_A/BUS_restart.py
+       - ./bus_restart/2/B_BUS_restart.cpython-36.pyc:/home/BUS_B/BUS_restart.py
+
+
+   team3:
+     build:
+       context: .
+       dockerfile: Dockerfile
+     container_name: os3-vlan50
+     command: bash -c "/usr/sbin/sshd -D"
+     networks:
+       vlan50:
+         ipv4_address: 192.168.50.33
+     restart: always
+     environment:
+       - TZ=Asia/Tokyo
+     volumes:
+       - ./bus_restart/3/A_BUS_restart.cpython-36.pyc:/home/BUS_A/BUS_restart.py
+       - ./bus_restart/3/B_BUS_restart.cpython-36.pyc:/home/BUS_B/BUS_restart.py
+
+
+
+   team4:
+     build:
+       context: .
+       dockerfile: Dockerfile
+     container_name: os4-vlan50
+     command: bash -c "/usr/sbin/sshd -D"
+     networks:
+       vlan50:
+         ipv4_address: 192.168.50.34
+     restart: always
+     environment:
+       - TZ=Asia/Tokyo
+     volumes:
+       - ./bus_restart/4/A_BUS_restart.cpython-36.pyc:/home/BUS_A/BUS_restart.py
+       - ./bus_restart/4/B_BUS_restart.cpython-36.pyc:/home/BUS_B/BUS_restart.py
+
+
+   team5:
+     build:
+       context: .
+       dockerfile: Dockerfile
+     container_name: os5-vlan50
+     command: bash -c "/usr/sbin/sshd -D"
+     networks:
+       vlan50:
+         ipv4_address: 192.168.50.35
+     restart: always
+     environment:
+       - TZ=Asia/Tokyo
+     volumes:
+       - ./bus_restart/5/A_BUS_restart.cpython-36.pyc:/home/BUS_A/BUS_restart.py
+       - ./bus_restart/5/B_BUS_restart.cpython-36.pyc:/home/BUS_B/BUS_restart.py
+
+   cadvisor:
+     image: google/cadvisor:latest
+     container_name: cadvisor
+     ports:
+     - 8080:8080
+     volumes:
+     - /:/rootfs:ro
+     - /var/run:/var/run:rw
+     - /sys:/sys:ro
+     - /var/lib/docker/:/var/lib/docker:ro
+
+
+ networks:
+   vlan50:
+     name: vlan50
+     driver: macvlan
+     driver_opts:
+       parent: eth0
+     ipam:
+       config:
+         - subnet: 192.168.50.0/26
+           gateway: 192.168.50.1
